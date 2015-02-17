@@ -31,67 +31,46 @@ preferences {
     	input "contact2", "capability.contactSensor", title: "Which Door?", required: true
     }    
 	section("Turn on this light...") {
-		input "switch1", "capability.switch", title: "Which Door?", required: true
+		input "switch1", "capability.switch", title: "Which Switch?", required: true
 	}
 }
 
 def installed() {
 	log.debug "Installed with settings: ${settings}"
-
-	init()
+	initialize()
 }
 
 def updated() {
-	log.debug "Updated with settings: ${settings}"
-
-	unsubscribe()
-	init()
+    log.debug "Updated with settings: ${settings}"
+    unsubscribe()
+    initialize()
 }
 
-def comboCreator() {
-	if(contact1 == "open" && contact2 == "closed"){
-		state.deviceCombo = "openClosed"    
-	}
-	else if(contact1 == "closed" && contact2 == "closed"){
-		state.deviceCombo = "closedClosed"
-	}
-	else if(contact1 == "closed" && contact2 == "open"){
-		state.deviceCombo = "closedOpen"
-	}
-    log.debug "Device combo is $state.deviceCombo"
+def initialize() {
+    subscribe(contact1, "contact", "contactOpenHandler")
+    subscribe(contact2, "contact", "contactClosedHandler")
+    subscribe(switch1, "switch", "switchHandler")
 }
 
-def contactHandler(evt) {
-	log.debug "$evt.value: $evt"
-    log.trace "Turning on $switches because $contact1 opened and $contact2 closed"
-	if (state.deviceCombo == "openClosed") {
-		switch1.on() 
-	} else if (state.deviceCombo == "closedClosed") {
-		switch1.off(delay: 0)
-	} else if (state.deviceCombo == "closedOpen") {
-		switch1.off(delay: 0)
-	}
-}
+def contactOpenHandler(evt) {
+	log.debug ("contact1 = $evt.value")
+    	checkOff()
+	} 
 
-def init () {
-	comboCreator()
-    if(state.deviceCombo == "openClosed"){
-    	subscribe(contact1, "contact1", contactHandler)
-        subscribe(contact2, "contact2", contactHandler)
-        log.debug "Correct state returned: House door opened & garage door closed"
-	}
-    else if(contact1 == "closed" && contact2 == "closed"){
-		state.deviceCombo = "closedClosed"
-        subscribe(contact1, "contact1", contactHandler)
-        subscribe(contact2, "contact2", contactHandler)
-        log.debug "Incorrect state returned: House door is closed & garage is door closed"
-	}
-	else if(contact1 == "closed" && contact2 == "open"){
-		state.deviceCombo = "closedOpen"
-        subscribe(contact1, "contact1", contactHandler)
-        subscribe(contact2, "contact2", contactHandler)
-        log.debug "Incorrect state returned: House door cloed & garage door is open"
-}
+def contactClosedHandler(evt) {
+	log.debug ("contact2 = $evt.value")
+    }
+   
+def switchHandler(evt) {
+	log.debug ("switch1 = $evt.value")
+    }
 
-
+def checkOff() {
+    def contact1Open = contact1.currentValue("contact") == "open"
+    def contact2Closed = contact2.currentValue("contact") == "closed"
+    def switchOff = switch1.currentValue("switch") == "off"
+    log.debug("light on : $contact1Open : $contact2Closed : $switchOff :")
+    if (contact1Open && contact2Closed && switchOff) {
+        switch1.on()
+    }
 }
