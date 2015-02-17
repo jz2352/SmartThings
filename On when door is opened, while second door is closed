@@ -14,17 +14,21 @@
  *
  */
 definition(
-    name: "On when door is opened, while second door is closed",
+    name: "On When Door is Opened, w/2nd Door Closed",
     namespace: "the2352",
     author: "Jason Ziemba",
-    description: "Turns light on when door is opened, while second door remains closed",
+    description: "Turns light on when door is opened, while a second door remains closed.",
     category: "Green Living",
     iconUrl: "https://s3.amazonaws.com/smartapp-icons/Convenience/Cat-Convenience.png",
     iconX2Url: "https://s3.amazonaws.com/smartapp-icons/Convenience/Cat-Convenience%402x.png"
 )
 
 preferences {
-	section("When this door opens...") {
+	section("Info") {
+    	paragraph "Author:	Jason Ziemba"
+        paragraph "Date:	2.17.2015"
+    }   
+    section("When this door opens...") {
 		input "contact1", "capability.contactSensor", title: "Which Door?", required: true
 	}
     section("And this door is closed...") {
