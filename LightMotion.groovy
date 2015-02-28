@@ -17,7 +17,7 @@ definition(
     name: "Closet Light Timer w/Motion",
     namespace: "the2352",
     author: "Jason Ziemba",
-    description: "Turns light on when door is opened, while a second door remains closed.",
+    description: "Turns off light w/delay after motion stops, and resets if motion is detected prior to light turning off",
     category: "",
     iconUrl: "https://s3.amazonaws.com/smartapp-icons/Convenience/Cat-Convenience.png",
     iconX2Url: "https://s3.amazonaws.com/smartapp-icons/Convenience/Cat-Convenience%402x.png"
@@ -26,17 +26,17 @@ definition(
 preferences {
 	section("Info") {
     	paragraph "Author:	Jason Ziemba"
-        paragraph "Version:	1.0 (Date - 02.28.15)"
+        paragraph "Version:	1.0 (Date: 02/28/15)"
         //paragraph "Change Log: " +
                   ""
     }   
     section("Select motion sensor...") {
 		input "motion1", "capability.motionSensor", title: "Which Motion Sensor?", required: true
 	}    
-	section("leave this light on...") {
+	section("Leave this light on when there is motion...") {
 		input "switch1", "capability.switch", title: "Which Switch?", required: true
 	}
-    section("Select the number of minutes after to turn off after motion stops") {
+    section("Select the number of minutes to turn off the light after motion stops... (default 15 minutes)") {
     	input "minutes", "number", title: "Minutes?", required: true, defaultValue: 15
     }
 }
